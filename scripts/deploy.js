@@ -13,6 +13,11 @@ async function main() {
   const telephone = await Telephone.deploy();
   console.log("Telephone address: ", await telephone.address);
   console.log("Account balance after Telephone deploy: ", (await deployer.getBalance()).toString());
+
+  const TelephoneAttack = await ethers.getContractFactory("TelephoneAttack");
+  const telephoneAttack = await TelephoneAttack.deploy();
+  console.log("TelephoneAttack address: ", await telephoneAttack.address);
+  console.log("Account balance after Telephone deploy: ", (await deployer.getBalance()).toString());
 }
 
 main()
