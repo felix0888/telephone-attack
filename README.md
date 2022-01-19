@@ -47,3 +47,22 @@ On the other hand, [Solidity Official Docs](https://docs.soliditylang.org/en/dev
 `tx.origin` is the sender of the transaction (full call chain)
 
 So the difference between the `msg.sender` can be described like this.
+
+1) Address type
+- `msg.sender` EOA(wallet), smart contract address
+- `tx.origin` only EOA. It can't be smart contract address.
+2) Scope
+- `msg.sender` is changed on each transaction/call(function from other smart contract)
+- `tx.origin` remains the same until the transaction is completed.
+
+On the above link you may find...
+
+> ! Note : The values of all members of msg, including msg.sender and msg.value can change for every external function call. This includes calls to library functions.
+
+> ! Note : When contracts are evaluated off-chain rather than in context of a transaction included in a block, you should not assume that block.* and tx.* refer to values from any specific block or transaction. These values are provided by the EVM implementation that executes the contract and can be arbitrary.
+
+[SWC-115](https://swcregistry.io/docs/SWC-115)
+> ! WARNING: Besides the issue with authorization, there is a chance that `tx.origin` will be removed from the Ethereum protocol in the future, so code that uses `tx.origin` won't be compatible with future releases [Vitalik: Do NOT assume that tx.origin will continue to be usable or meaningful.](https://ethereum.stackexchange.com/questions/196/how-do-i-make-my-dapp-serenity-proof/200#200)
+
+#### So what we can get from the above practice is...
+> By checking tx.origin, it gets the original address that kicked off the transaction, which is still the owner address. The attack wallet instantly drains all your funds. Smart contracts that provide authentication using the tx.origin variable are usually vulnerable to phishing attacks which may trick users into performing authenticated actions on the vulnerable contract. 
