@@ -1,42 +1,49 @@
-# Advanced Sample Hardhat Project
+# Telephone Attack
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+Smart Contract Security Practice | Lv4 Telephone Attack
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.js
-node scripts/deploy.js
-npx eslint '**/*.js'
-npx eslint '**/*.js' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
+```
+!!! DON'T TRY ON MAINNET !!!
 ```
 
-# Etherscan verification
+## Summary
+Look carefully at the contract's code below. You find a security risk on the contract and expose it.
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
+#### You will beat this level if
+- you claim ownership of the contract
 
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
+#### What you will learn
+- Difference between `msg.sender` and `tx.origin`
 
-```shell
-hardhat run --network ropsten scripts/deploy.js
+## Smart Contract Code
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.6.0;
+
+contract Telephone {
+
+  address public owner;
+
+  constructor() public {
+    owner = msg.sender;
+  }
+
+  function changeOwner(address _owner) public {
+    if (tx.origin != msg.sender) {
+      owner = _owner;
+    }
+  }
+}
 ```
 
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
+## Security pitfall in the contract
+#### `msg.sender` vs `tx.origin`
+To win this level, you need to know what is `tx.origin` and what differences it has compared to `msg.sender`.
+`msg.sender` is always the address where the current (external) function call came from.
+`tx.origin` is a global variable in Solidity which returns the address of the account that sent the transaction.
 
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
-```
+On the other hand, [Solidity Official Docs](https://docs.soliditylang.org/en/develop/units-and-global-variables.html#block-and-transaction-properties) described like this.
+`msg.sender` is sender of the message (current call)
+`tx.origin` is the sender of the transaction (full call chain)
+
+So the difference between the `msg.sender` can be described like this.
