@@ -55,6 +55,8 @@ So the difference between the `msg.sender` can be described like this.
 - `msg.sender` is changed on each transaction/call(function from other smart contract)
 - `tx.origin` remains the same until the transaction is completed.
 
+![1_FBfocFfHm8NxsTxmCL-p6w](./telephone.png)
+
 On the above link you may find...
 
 > ! Note : The values of all members of msg, including msg.sender and msg.value can change for every external function call. This includes calls to library functions.
@@ -66,3 +68,39 @@ On the above link you may find...
 
 #### So what we can get from the above practice is...
 > By checking tx.origin, it gets the original address that kicked off the transaction, which is still the owner address. The attack wallet instantly drains all your funds. Smart contracts that provide authentication using the tx.origin variable are usually vulnerable to phishing attacks which may trick users into performing authenticated actions on the vulnerable contract. 
+
+## Deploy & Test
+#### Installation
+```
+npm install
+npx hardhat node
+```
+#### Deployment
+```
+npx hardhat run --network [NETWORK-NAME] scripts/deploy.js
+```
+#### Test
+You should see the `owner` of the `Telephone` contract is updated.
+```
+npx hardhat test
+```
+```
+dev@ubuntu:~/Documents/practice/telephone-attack$ npx hardhat test
+
+  Telephone
+    deployment
+      ✓ should set the owner
+
+  TelephoneAttack
+    deployment
+      ✓ should set the attacker
+    #attack
+      ✓ should be reverted if non-attacker tries
+      ✓ should change the owner of Telephone contract (43ms)
+
+
+  4 passing (972ms)
+
+```
+
+You can test telephone on the local hardhat node by using `npx hardhat node` and `npx hardhat console` as well.
